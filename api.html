@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+</head>
+<body>
+
+<div id="petfinderInfo"></div>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	var url = 'http://api.petfinder.com/pet.getRandom?key=b6ba5a567c1e4f543b3c8a4b7ae0cf76&shelterid=KY305&output=full&format=json';
+	$.ajax({
+	    type : 'GET',
+	    data : {},
+	    url : url+'&callback=?' ,
+	    dataType: 'json',
+	    success : function(data) {              
+			// stores result
+			var result = '';
+
+			var petfinder = data.petfinder;
+			var infoHTML = '<ul>';
+			infoHTML += '<li>';
+			infoHTML += '<strong>Description</strong><br>';
+			infoHTML += petfinder.pet.description['$t'];
+			infoHTML += '</li>';
+
+			infoHTML += '<li>';
+			infoHTML += '<strong>Breed</strong><br>';
+			$.each(petfinder.pet.breeds.breed, function(i, breed){
+				infoHTML += '<p>'+ breed['$t'] + '</p>';
+			});
+			infoHTML += '</li>';
+
+			infoHTML += '<li>';
+			infoHTML += '<strong>shelterId</strong><br>';
+			infoHTML += petfinder.pet.shelterId['$t'];
+			infoHTML += '</li>';
+			infoHTML += '<li>';
+			infoHTML += '<strong>Images WITH SIZE</strong><br>';
+			$.each(petfinder.pet.media.photos.photo, function(i, image){
+				if(image['@size'] == 'x' && image['@id'] == '1'){
+					infoHTML += '<img src="'+image['$t']+'" />';
+				}
+
+			});
+			infoHTML += '</li>';
+
+			infoHTML += '<li>';
+			infoHTML += '<strong>Images</strong><br>';
+			$.each(petfinder.pet.media.photos.photo, function(i, image){
+				infoHTML += '<img src="'+image['$t']+'" />';
+
+			});
+			infoHTML += '</li>';
+
+			infoHTML += '</ul>';
+			// return infoHTML;
+			$('#petfinderInfo').html(infoHTML);
+
+			// $('#petfinderInfo').html(petfinder.pet.description['$t']);
+			// 
+			console.log(petfinder);
+	    },
+	    error : function(request,error)
+	    {
+	        alert("Request: "+JSON.stringify(request));
+	    }
+	});
+});
+
+</script>
+</body>
+</html>
